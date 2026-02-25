@@ -55,8 +55,8 @@ import p_img51 from './p_img51.png'
 import p_img52 from './p_img52.png'
 
 
-import logo from './logo.png'
-import hero_img from './hero_img.png'
+import dripped_logo from './dripped_logo.png'
+import hero_img from './main_logo.jpg'
 import cart_icon from './cart_icon.png'
 import bin_icon from './bin_icon.png'
 import dropdown_icon from './dropdown_icon.png'
@@ -75,7 +75,7 @@ import stripe_logo from './stripe_logo.png'
 import cross_icon from './cross_icon.png'
 
 export const assets = {
-    logo,
+    dripped_logo,
     hero_img,
     cart_icon,
     dropdown_icon,
