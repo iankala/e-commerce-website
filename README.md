@@ -1,4 +1,4 @@
-# 🛍️ Forever — Full Stack E-Commerce Website
+# 🛍️ Dripped — Full Stack E-Commerce Website
 
 A complete, production-ready full-stack e-commerce web application built with the MERN stack and Stripe payment integration.
 
@@ -12,7 +12,7 @@ A complete, production-ready full-stack e-commerce web application built with th
 
 ## About
 
-Forever is a fully functional online clothing store with a customer-facing storefront, an admin dashboard for inventory and order management, and a secure backend API. Users can browse collections, manage their cart, authenticate securely, and complete purchases via Stripe.
+Dripped is a fully functional online clothing store with a customer-facing storefront, an admin dashboard for inventory and order management, and a secure backend API. Users can browse collections, manage their cart, authenticate securely, and complete purchases via Stripe.
 
 ## Features
 
