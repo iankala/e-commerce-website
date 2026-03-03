@@ -1,12 +1,12 @@
 import React, { useContext, useMemo, useState } from 'react'
-import { shopContext } from '../context/shopContext'
+import { ShopContext } from '../context/shopContext'
 import { assets } from '../assets/frontend_assets/assets'
 import Title from '../components/title'
 import ProductItem from '../components/ProductItem'
 
 const Collection = () => {
   
-    const { products, search, showSearch } = useContext(shopContext);
+    const { products, search, showSearch } = useContext(ShopContext);
     const [showFilter, setShowFilter] = useState(true);
     const [category, setCategory] = useState([]);
     const [subcategory, setSubcategory]= useState([]);

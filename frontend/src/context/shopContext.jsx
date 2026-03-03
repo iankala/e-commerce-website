@@ -1,19 +1,18 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useState } from "react";
 import { products } from "../assets/frontend_assets/assets"
 import { toast } from "react-toastify";
+import {useNavigate} from 'react-router-dom'
 
-export const shopContext = createContext();
+export const ShopContext = createContext();
 
-const shopContextProvider = (props) => {
+const ShopContextProvider = (props) => {
 
     const currency = '$';
     const delivery_fee = 10;
-    // eslint-disable-next-line react-hooks/rules-of-hooks
     const [search, setSearch] = useState('')
-    // eslint-disable-next-line react-hooks/rules-of-hooks
     const [showSearch, setShowSearch] = useState(false)
-    // eslint-disable-next-line react-hooks/rules-of-hooks
     const [cartItems, setCartItems] = useState({});
+    const navigate = useNavigate();
 
 
     const addToCart = async (itemID, size)=> {
@@ -60,7 +59,7 @@ const shopContextProvider = (props) => {
         return totalCount;
     }
 
-    const updateQuantity = async (itemID, size, quantity)=>{
+    const updateQuantity = (itemID, size, quantity)=>{
         let cartData = structuredClone(cartItems);
 
         cartData[itemID][size] = quantity;
@@ -69,16 +68,36 @@ const shopContextProvider = (props) => {
 
     }
 
+    const getCartAmount = ()=>{
+        let TotalAmount = 0;
+        for(const items in cartItems){
+            let itemInfo = products.find((product)=> product._id === items );
+            for(const item in cartItems[items]){
+                try {
+                    if(cartItems[items][item]>0){
+                          TotalAmount += itemInfo.price * cartItems[items][item]  
+                    }
+                } catch(error){
+                    console.log(error);
+                    
+                }
+
+            }
+        }
+        return TotalAmount
+    }
+
+
     const value = {
 
-        products, currency, delivery_fee, search, setSearch, showSearch,setShowSearch, cartItems, addToCart, getCartCount, updateQuantity
+        products, currency, delivery_fee, search, setSearch, showSearch,setShowSearch, cartItems, addToCart, getCartCount, updateQuantity,getCartAmount, navigate
     }
 
     return(
-        <shopContext.Provider value={value}>
+        <ShopContext.Provider value={value}>
             {props.children}
-        </shopContext.Provider>
+        </ShopContext.Provider>
     )
 
 }
-export default shopContextProvider
+export default ShopContextProvider
