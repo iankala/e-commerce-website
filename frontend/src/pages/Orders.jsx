@@ -25,7 +25,7 @@ const Orders = () => {
           order.items.map((item) => {
             item["status"] = order.status;
             item["payment"] = order.payment;
-            item["paymentMethod "] = order.paymentMethod;
+            item["paymentMethod"] = order.paymentMethod;
             item["date "] = order.date;
             allOrdersItem.push(item);
           });
@@ -55,7 +55,7 @@ const Orders = () => {
               <img className="w-16 sm:w-20" src={item.image[0]} alt="" />
               <div className="mr-10">
                 <p className="sm:text-base font-medium">{item.name}</p>
-                <div className="flex items-center gap-3 mt-2 text-base text-gray-700">
+                <div className="flex items-center gap-3 mt-1 text-base text-gray-700">
                   <p className="text-lg">
                     {currency}
                     {item.price}
@@ -63,10 +63,16 @@ const Orders = () => {
                   <p>Quantity: {item.quantity}</p>
                   <p>Size: {item.size}</p>
                 </div>
-                <p className="mt-2">
+                <p className="mt-1">
                   Date:{" "}
                   <span className="text-gray-400">
                     {new Date(item.date).toDateString()}
+                  </span>
+                </p>
+                <p className="mt-1">
+                  Payment:{" "}
+                  <span className="text-gray-400">
+                    {item.paymentMethod}
                   </span>
                 </p>
               </div>
