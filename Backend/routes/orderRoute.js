@@ -1,7 +1,7 @@
 import express from 'express'
 import authUser from '../middleware/auth.js'
 
-import {placeOrder, placeOrderStripe, placeOrderRazorpay, allOrders, userOrders, updateStatus, verifyStripe} from '../controllers/orderController.js'
+import {placeOrder, placeOrderStripe, placeOrderMpesa,mpesaCallback, placeOrderRazorpay, allOrders, userOrders, updateStatus, verifyStripe} from '../controllers/orderController.js'
 
 import adminAuth from '../middleware/adminauth.js'
 
@@ -15,6 +15,8 @@ orderRouter.post('/status', adminAuth, updateStatus)
 orderRouter.post('/place',authUser, placeOrder)
 orderRouter.post('/stripe',authUser, placeOrderStripe)
 orderRouter.post('/razorpay',authUser, placeOrderRazorpay)
+orderRouter.post('/mpesa', authUser, placeOrderMpesa)
+orderRouter.post('/mpesa-callback', mpesaCallback) 
 
 //user Feature
 orderRouter.post('/userorders',authUser, userOrders)

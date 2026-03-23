@@ -1,6 +1,7 @@
 import orderModel from '../models/orderModel.js'
 import userModel from '../models/userModel.js'
 import Stripe from 'stripe'
+import axios from 'axios'
 
 //global variables
 const currency = 'usd'
@@ -8,6 +9,19 @@ const deliveryCharge = 10
 
 //GATEWAI INITIALIZE
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
+
+// M-Pesa token helper
+const getMpesaToken = async () => {
+    const auth = Buffer.from(
+        `${process.env.MPESA_CONSUMER_KEY}:${process.env.MPESA_CONSUMER_SECRET}`
+    ).toString('base64')
+
+    const response = await axios.get(
+        'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials',
+        { headers: { Authorization: `Basic ${auth}` } }
+    )
+    return response.data.access_token
+}
 
 //placing orders using COD Method
 const placeOrder = async (req, res)=> {
@@ -121,6 +135,75 @@ const placeOrderRazorpay = async (req, res)=> {
 
     }
 }
+// placing orders using M-Pesa
+const placeOrderMpesa = async (req, res) => {
+    try {
+        const { userId, items, amount, address, phone } = req.body
+
+        const orderData = {
+            userId, items, amount, address,
+            paymentMethod: "Mpesa",
+            payment: false,
+            date: Date.now()
+        }
+        const newOrder = new orderModel(orderData)
+        await newOrder.save()
+
+        const token = await getMpesaToken()
+
+        const timestamp = new Date().toISOString()
+            .replace(/[-T:.Z]/g, '').slice(0, 14)
+        const password = Buffer.from(
+            `${process.env.MPESA_SHORTCODE}${process.env.MPESA_PASSKEY}${timestamp}`
+        ).toString('base64')
+
+        const stkResponse = await axios.post(
+            'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest',
+            {
+                BusinessShortCode: process.env.MPESA_SHORTCODE,
+                Password: password,
+                Timestamp: timestamp,
+                TransactionType: 'CustomerPayBillOnline',
+                Amount: Math.ceil(amount),
+                PartyA: phone,
+                PartyB: process.env.MPESA_SHORTCODE,
+                PhoneNumber: phone,
+                CallBackURL: process.env.MPESA_CALLBACK_URL,
+                AccountReference: newOrder._id.toString(),
+                TransactionDesc: 'DRIPPED Order Payment'
+            },
+            { headers: { Authorization: `Bearer ${token}` } }
+        )
+        res.json({ success: true, orderId: newOrder._id, data: stkResponse.data })
+
+    } catch (error) {
+        console.log(error)
+        res.json({ success: false, message: error.message })
+    }
+}
+
+// M-Pesa callback — Safaricom calls this after payment
+const mpesaCallback = async (req, res) => {
+    try {
+        const { Body } = req.body
+        const resultCode = Body.stkCallback.ResultCode
+
+        if (resultCode === 0) {
+            const orderId = Body.stkCallback.CallbackMetadata.Item
+                .find(i => i.Name === 'AccountReference').Value
+            await orderModel.findByIdAndUpdate(orderId, { payment: true })
+            await userModel.findByIdAndUpdate(
+                (await orderModel.findById(orderId)).userId,
+                { cartData: {} }
+            )
+        }
+        res.json({ success: true })
+    } catch (error) {
+        console.log(error)
+        res.json({ success: false, message: error.message })
+    }
+}
+
 
 // All orders data for Admin panel
 const allOrders = async (req, res)=> {
@@ -160,4 +243,4 @@ const updateStatus = async (req, res)=> {
     }
 }
 
-export {verifyStripe, placeOrder, placeOrderStripe, placeOrderRazorpay, allOrders, userOrders, updateStatus}
+export {verifyStripe,mpesaCallback,placeOrderMpesa, placeOrder, placeOrderStripe, placeOrderRazorpay, allOrders, userOrders, updateStatus}

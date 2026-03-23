@@ -79,14 +79,33 @@ const PlaceOrder = () => {
           }
           break;
 
-          case 'stripe':
-            const responseStripe = await axios.post(backendUrl + '/api/order/stripe', orderData, {headers:{token}})
-            if(responseStripe.data.sucess){
-              const {session_url} = responseStripe.data
-              window.location.replace(session_url)
-            }else{
-              toast.error(responseStripe.data.message)
-            }
+        case "mpesa":
+          const mpesaResponse = await axios.post(
+            backendUrl + "/api/order/mpesa",
+            { ...orderData, phone: formData.phone.replace(/^0/, "254") },
+            { headers: { token } },
+          );
+          if (mpesaResponse.data.success) {
+            toast.success("Check your phone for M-Pesa prompt");
+            setCartItems({});
+            navigate("/orders");
+          } else {
+            toast.error(mpesaResponse.data.message);
+          }
+          break;
+
+        case "stripe":
+          const responseStripe = await axios.post(
+            backendUrl + "/api/order/stripe",
+            orderData,
+            { headers: { token } },
+          );
+          if (responseStripe.data.success) {
+            const { session_url } = responseStripe.data;
+            window.location.replace(session_url);
+          } else {
+            toast.error(responseStripe.data.message);
+          }
           break;
 
         default:
@@ -235,6 +254,16 @@ const PlaceOrder = () => {
               <p className="text-gray-500 text-sm font-medium mx-4">
                 CASH ON DELIVERY
               </p>
+            </div>
+            <div
+              onClick={() => setMethod("mpesa")}
+              className="flex items-center gap-3 border p-2 px-3 cursor-pointer"
+            >
+              <p
+                className={`min-w-3.5 h-3.5 border rounded-full 
+        ${method === "mpesa" ? "bg-green-400" : ""}`}
+              ></p>
+              <p className="text-gray-500 text-sm font-medium mx-4">M-PESA</p>
             </div>
           </div>
 
