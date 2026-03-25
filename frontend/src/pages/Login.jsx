@@ -39,7 +39,7 @@ const Login = () => {
 
     useEffect(()=>{
         if(token) {
-            navigate('/')
+            navigate('/home')
         }
 
     }, [token])

@@ -19,13 +19,13 @@ const Navbar = () => {
 
   return (
     <div className='flex items-center justify-between py-5 font-medium '>
-      <Link to='/' className='mr-1'>
+      <Link to='/home' className='mr-1'>
       <img src={assets.dripped_logo} className='w-60' alt="" />
       </Link>
 
       <ul className='hidden sm:flex gap-5 text-sm text-gray-700'>
 
-        <NavLink to='/' className='flex flex-col items-center gap-1'>
+        <NavLink to='/home' className='flex flex-col items-center gap-1'>
           <p>HOME</p>
           <hr className='w-2/4 border-none h-[1.5px] bg-gray-700 invisible'/>
         </NavLink>

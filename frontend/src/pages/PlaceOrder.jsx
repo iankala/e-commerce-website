@@ -80,14 +80,21 @@ const PlaceOrder = () => {
           break;
 
         case "mpesa":
+          // Format phone number for Kenyan M-Pesa (ensure it starts with 254)
+          let phoneNumber = formData.phone.replace(/\D/g, ''); // Remove non-digits
+          if (phoneNumber.startsWith('0')) {
+            phoneNumber = '254' + phoneNumber.slice(1);
+          } else if (!phoneNumber.startsWith('254')) {
+            phoneNumber = '254' + phoneNumber;
+          }
           const mpesaResponse = await axios.post(
             backendUrl + "/api/order/mpesa",
-            { ...orderData, phone: formData.phone.replace(/^0/, "254") },
+            { ...orderData, phone: phoneNumber },
             { headers: { token } },
           );
           if (mpesaResponse.data.success) {
             toast.success("Check your phone for M-Pesa prompt");
-            setCartItems({});
+            // Note: Cart will be cleared after successful payment via callback
             navigate("/orders");
           } else {
             toast.error(mpesaResponse.data.message);

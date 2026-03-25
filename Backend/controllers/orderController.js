@@ -6,6 +6,7 @@ import axios from 'axios'
 //global variables
 const currency = 'usd'
 const deliveryCharge = 10
+const usdToKesRate = 130 // Approximate exchange rate: 1 USD = 130 KES
 
 //GATEWAI INITIALIZE
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
@@ -96,7 +97,7 @@ const placeOrderStripe = async (req, res)=> {
             mode:'payment',
         })
 
-        res.json({sucess:true, session_url:session.url})
+        res.json({success:true, session_url:session.url})
     }
     catch(error){
          console.log(error);
@@ -108,12 +109,19 @@ const placeOrderStripe = async (req, res)=> {
 
 //verify Stripe
 const  verifyStripe = async(req, res)=>{
-    const {orderId, success, userId } = req.body
+    const { orderId, success } = req.body
 
     try{
+        const order = await orderModel.findById(orderId)
+        if (!order) {
+            return res.status(404).json({ success: false, message: 'Order not found' })
+        }
+
         if (success === "true"){
             await orderModel.findByIdAndUpdate(orderId, {payment:true})
-            await userModel.findByIdAndUpdate(userId, {cartData: {}})
+            if (order.userId) {
+                await userModel.findByIdAndUpdate(order.userId, {cartData: {}})
+            }
             res.json({success: true});
         }else{
             await orderModel.findByIdAndDelete(orderId)
@@ -164,7 +172,7 @@ const placeOrderMpesa = async (req, res) => {
                 Password: password,
                 Timestamp: timestamp,
                 TransactionType: 'CustomerPayBillOnline',
-                Amount: Math.ceil(amount),
+                Amount: Math.ceil(amount * usdToKesRate),
                 PartyA: phone,
                 PartyB: process.env.MPESA_SHORTCODE,
                 PhoneNumber: phone,
