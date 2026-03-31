@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import Hero from '../components/hero'
 import LatestCollection from '../components/latestCollection'
 import BestSeller from '../components/bestSeller'
-import TopRankedProducts from '../components/TopRankedProducts'
 import OurPolicy from '../components/ourPolicy'
 import Newsletter from '../components/Newsletter'
 import { ShopContext } from '../context/shopContext'
@@ -23,7 +22,6 @@ const Home = () => {
       <Hero />
       <LatestCollection />
       <BestSeller />
-      <TopRankedProducts />
       <OurPolicy />
       <Newsletter />
     </div>

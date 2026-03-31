@@ -125,10 +125,7 @@ const Collection = () => {
                         id={item._id} 
                         name={item.name} 
                         image={item.image} 
-                        price ={item.price}
-                        averageRating={item.averageRating}
-                        totalReviews={item.totalReviews}
-                        ranking={item.ranking}/>
+                        price ={item.price}/>
                 ))
             }
         </div>
