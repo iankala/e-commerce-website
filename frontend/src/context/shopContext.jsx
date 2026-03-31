@@ -130,6 +130,44 @@ const ShopContextProvider = (props) => {
     }
   };
 
+  const addReview = async (productId, rating, comment) => {
+    try {
+      const response = await axios.post(
+        backendUrl + "/api/review/add",
+        { productId, rating, comment },
+        { headers: { token } }
+      );
+      if (response.data.success) {
+        toast.success(response.data.message);
+        await getProductsData(); // Refresh products to update ratings
+        return true;
+      } else {
+        toast.error(response.data.message);
+        return false;
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message);
+      return false;
+    }
+  };
+
+  const getProductReviews = async (productId) => {
+    try {
+      const response = await axios.get(`${backendUrl}/api/review/product/${productId}`);
+      if (response.data.success) {
+        return response.data;
+      } else {
+        toast.error(response.data.message);
+        return null;
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message);
+      return null;
+    }
+  };
+
   const getUserCart = async (token) => {
     try {
       const response = await axios.post(
@@ -175,6 +213,8 @@ const ShopContextProvider = (props) => {
     navigate,
     backendUrl,
     setCartItems,
+    addReview,
+    getProductReviews,
   };
 
   return (

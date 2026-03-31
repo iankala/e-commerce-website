@@ -18,7 +18,7 @@ const latestCollection = () => {
         <div className='text-center py-8 text-3xl'>
             <Title text1={'LATEST '} text2 ={'COLLECTIONS'} />
             <p className='w-3/4 m-auto text-xs sm:text:sm md:text-base'>
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quod, temporibus modi obcaecati ea natus doloremque non qui dolorem a vitae delectus eius mollitia consectetur, possimus necessitatibus enim dolore? Fugiat, perferendis!</p>
+            Discover our newest arrivals featuring cutting-edge streetwear designs that blend comfort with contemporary style. Each piece is carefully crafted to elevate your everyday look, from premium basics to statement-making outfits that express your unique personality.</p>
         </div>
       
       {/* Rendering Products */}
@@ -31,7 +31,10 @@ const latestCollection = () => {
                   id={item._id}
                   image={item.image}
                   name={item.name}
-                  price={item.price}/>
+                  price={item.price}
+                  averageRating={item.averageRating}
+                  totalReviews={item.totalReviews}
+                  ranking={item.ranking}/>
             ))
         }
       </div>

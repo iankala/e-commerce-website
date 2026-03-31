@@ -21,7 +21,7 @@ const BestSeller = () => {
         <div className='text-center text-3xl py-8'>
         <Title text1={'BEST '} text2={'SELLERS'}/>
         <p className='w-3/4 m-auto text-xs sm:text-sm md:text-base text-gray-600'>
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Explicabo esse distinctio mollitia unde. Harum facere, qui odit sit accusantium a suscipit veritatis vitae amet dolore, omnis nemo. Ut, atque? Voluptatem!</p>
+        Explore our top-rated products that customers love and trust. These best-selling items have earned their popularity through exceptional quality, style, and customer satisfaction. Join thousands of satisfied shoppers who have made these their go-to fashion choices.</p>
         </div>
 
         <div className='grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-4 gap-4 gap-y-6'>
@@ -32,7 +32,10 @@ const BestSeller = () => {
                     id={item._id} 
                     name={item.name} 
                     image={item.image} 
-                    price ={item.price}/> 
+                    price={item.price}
+                    averageRating={item.averageRating}
+                    totalReviews={item.totalReviews}
+                    ranking={item.ranking}/> 
 
                 ))
             }

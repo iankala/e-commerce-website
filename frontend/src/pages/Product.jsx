@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 import { ShopContext } from '../context/shopContext'
 import { assets } from '../assets/frontend_assets/assets'
 import RelatedProducts from '../components/relatedProducts'
+import ReviewSection from '../components/ReviewSection'
 
 const Product = () => {
   
@@ -50,12 +51,19 @@ const Product = () => {
         <div className='flex-1'>
             <h1 className='items-stretch font-medium text-2xl mt-2' >{productData.name}</h1>
             <div className='flex flex-items-center gap-1 mt-2'>
-                <img className='w-6 5' src={assets.star_icon} alt="" />
-                <img className='w-6 5' src={assets.star_icon} alt="" />
-                <img className='w-6 5' src={assets.star_icon} alt="" />
-                <img className='w-6 5' src={assets.star_icon} alt="" />
-                <img className='w-6 5' src={assets.dull_icon} alt="" />
-                <p className='pl-2'>(122)</p>
+                <div className='flex gap-1'>
+                    {[1, 2, 3, 4, 5].map((star) => (
+                        <img 
+                            key={star} 
+                            className='w-4' 
+                            src={star <= Math.round(productData.averageRating || 0) ? assets.star_icon : assets.dull_icon} 
+                            alt="star" 
+                        />
+                    ))}
+                </div>
+                <p className='pl-2 text-sm text-gray-600'>
+                    {productData.averageRating ? `${productData.averageRating.toFixed(1)} (${productData.totalReviews || 0})` : 'No reviews yet'}
+                </p>
             </div>
             <p className='mt-5 text-3xl font-medium'>{currency}{productData.price}</p>
             <p className='mt-5 text-gray-500 md:w-4/5'>{productData.description}</p>
@@ -79,14 +87,18 @@ const Product = () => {
         {/* description and review section */}
         <div className='mt-20'>
             <div className='flex'>
-                <b className='border px-5 py-3 text-sm'>Description</b>
-                <p className='border px-5 py-3 text-sm'>Reviews (122)</p>
+                <b className='border px-5 py-3 text-sm cursor-pointer bg-gray-50'>Description</b>
+                <p className='border px-5 py-3 text-sm cursor-pointer hover:bg-gray-50'>
+                    Reviews ({productData.totalReviews || 0})
+                </p>
             </div>
             <div className='flex flex-col gap-4 border px-6 py-6 text-sm text-gray-500'>
-                <p>Built for the bold. This oversized tee is cut from 100% heavyweight cotton, delivering a relaxed fit that hits different. Designed to outlast trends and turn heads — wear it like you mean it.</p>
-                <p>Effortless style meets premium comfort. Tailored from soft-touch pure cotton, this piece transitions seamlessly from casual days to late nights. Minimal by design, unforgettable in presence.</p>
+                <p>{productData.description}</p>
             </div>
-            </div>            
+            
+            {/* Review Section */}
+            <ReviewSection productId={productId} />
+        </div>            
 
       {/* display related products */}
       <RelatedProducts category={productData.category} subCategory={productData.subCategory}/>              

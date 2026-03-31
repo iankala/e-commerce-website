@@ -28,9 +28,45 @@ const productSchema = new mongoose.Schema({
     date: {
         type:Number,
         required:true
+    },
+    reviews: [{
+        userId: {
+            type: String,
+            required: true
+        },
+        userName: {
+            type: String,
+            required: true
+        },
+        rating: {
+            type: Number,
+            required: true,
+            min: 1,
+            max: 5
+        },
+        comment: {
+            type: String,
+            required: true
+        },
+        date: {
+            type: Number,
+            required: true
+        }
+    }],
+    averageRating: {
+        type: Number,
+        default: 0
+    },
+    totalReviews: {
+        type: Number,
+        default: 0
+    },
+    ranking: {
+        type: Number,
+        default: 0
     }
-    })
+})
 
-    const productModel = mongoose.models.poroduct || mongoose.model("product", productSchema)
+const productModel = mongoose.models.product || mongoose.model("product", productSchema)
 
-    export default productModel
+export default productModel
