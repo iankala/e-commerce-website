@@ -3,14 +3,18 @@ import { useParams } from 'react-router-dom'
 import { ShopContext } from '../context/shopContext'
 import { assets } from '../assets/frontend_assets/assets'
 import RelatedProducts from '../components/relatedProducts'
+import axios from 'axios'
 
 const Product = () => {
   
     const {productId} =  useParams()
-    const {products, currency, addToCart} = useContext(ShopContext)
+    const {products, currency, addToCart, token, backendUrl} = useContext(ShopContext)
     const [productData, setProductData] = useState(false)
     const [image, setImage] = useState('')
     const [size, setSize]= useState('')
+    const [reviews, setReviews] = useState([])
+    const [rating, setRating] = useState(5)
+    const [comment, setComment] = useState('')
 
     const fetchProductData = () => {
         const foundProduct = products.find(
@@ -23,8 +27,46 @@ const Product = () => {
         }
     };
 
+    const fetchReviews = async () => {
+        try {
+            const response = await axios.get(`${backendUrl}/api/review/product/${productId}`);
+            if (response.data.success) {
+                setReviews(response.data.reviews);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const submitReview = async (e) => {
+        e.preventDefault();
+        if (!token) {
+            alert('Please login to add a review');
+            return;
+        }
+        
+        try {
+            const response = await axios.post(
+                `${backendUrl}/api/review/add`,
+                { productId, rating, comment },
+                { headers: { token } }
+            );
+            
+            if (response.data.success) {
+                alert(response.data.message);
+                setRating(5);
+                setComment('');
+                fetchReviews();
+            }
+        } catch (error) {
+            console.log(error);
+            alert('Failed to add review');
+        }
+    };
+
     useEffect(()=>{
         fetchProductData();
+        fetchReviews();
     },[productId])
     
     return productData ? (
@@ -53,7 +95,7 @@ const Product = () => {
                 <img className='w-6' src={assets.star_icon} alt="" />
                 <img className='w-6' src={assets.star_icon} alt="" />
                 <img className='w-6' src={assets.star_icon} alt="" />
-                <img className='w-6' src={assets.dull_icon} alt="" />
+                <img className='w-6' src={assets.star_dull_icon} alt="" />
                 <p className='pl-2'>(122)</p>
             </div>
             <p className='mt-5 text-3xl font-medium'>{currency}{productData.price}</p>
@@ -79,13 +121,84 @@ const Product = () => {
         <div className='mt-20'>
             <div className='flex'>
                 <b className='border px-5 py-3 text-sm'>Description</b>
-                <p className='border px-5 py-3 text-sm'>Reviews (122)</p>
+                <p className='border px-5 py-3 text-sm cursor-pointer hover:bg-gray-50'>Reviews ({reviews.length})</p>
             </div>
             <div className='flex flex-col gap-4 border px-6 py-6 text-sm text-gray-500'>
-                <p>Built for the bold. This oversized tee is cut from 100% heavyweight cotton, delivering a relaxed fit that hits different. Designed to outlast trends and turn heads — wear it like you mean it.</p>
-                <p>Effortless style meets premium comfort. Tailored from soft-touch pure cotton, this piece transitions seamlessly from casual days to late nights. Minimal by design, unforgettable in presence.</p>
+                <p>{productData.description}</p>
             </div>
-            </div>            
+            
+            {/* Review Form */}
+            {token && (
+                <div className='border px-6 py-6'>
+                    <h3 className='text-lg font-medium mb-4'>Write a Review</h3>
+                    <form onSubmit={submitReview} className='space-y-4'>
+                        <div>
+                            <label className='block text-sm font-medium mb-2'>Rating</label>
+                            <select 
+                                value={rating} 
+                                onChange={(e) => setRating(Number(e.target.value))}
+                                className='border p-2 w-full'
+                            >
+                                <option value={5}>5 Stars</option>
+                                <option value={4}>4 Stars</option>
+                                <option value={3}>3 Stars</option>
+                                <option value={2}>2 Stars</option>
+                                <option value={1}>1 Star</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label className='block text-sm font-medium mb-2'>Your Review</label>
+                            <textarea
+                                value={comment}
+                                onChange={(e) => setComment(e.target.value)}
+                                className='w-full border p-2'
+                                rows='3'
+                                placeholder='Share your experience with this product...'
+                                required
+                            />
+                        </div>
+                        <button 
+                            type='submit' 
+                            className='bg-black text-white px-6 py-2 text-sm hover:bg-gray-800'
+                        >
+                            Submit Review
+                        </button>
+                    </form>
+                </div>
+            )}
+            
+            {/* Reviews List */}
+            <div className='border px-6 py-6'>
+                <h3 className='text-lg font-medium mb-4'>Customer Reviews</h3>
+                {reviews.length === 0 ? (
+                    <p className='text-gray-500'>No reviews yet. Be the first to review this product!</p>
+                ) : (
+                    <div className='space-y-4'>
+                        {reviews.map((review) => (
+                            <div key={review._id} className='border-b pb-4'>
+                                <div className='flex items-center gap-2 mb-2'>
+                                    <span className='font-medium text-sm'>{review.userName}</span>
+                                    <div className='flex gap-1'>
+                                        {[1, 2, 3, 4, 5].map((star) => (
+                                            <img 
+                                                key={star} 
+                                                className='w-4 h-4' 
+                                                src={star <= review.rating ? assets.star_icon : assets.star_dull_icon} 
+                                                alt="star" 
+                                            />
+                                        ))}
+                                    </div>
+                                    <span className='text-xs text-gray-500'>
+                                        {new Date(review.date).toLocaleDateString()}
+                                    </span>
+                                </div>
+                                <p className='text-sm text-gray-700'>{review.comment}</p>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+        </div>
 
       {/* display related products */}
       <RelatedProducts category={productData.category} subCategory={productData.subCategory}/>              
@@ -93,6 +206,5 @@ const Product = () => {
     </div>
   ) : <div className='opacity-0'></div>
 }
-
 
 export default Product
