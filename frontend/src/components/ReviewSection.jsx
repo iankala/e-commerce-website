@@ -49,7 +49,7 @@ const ReviewSection = ({ productId }) => {
                 {[1, 2, 3, 4, 5].map((star) => (
                     <img
                         key={star}
-                        src={star <= rating ? assets.star_icon : assets.dull_icon}
+                        src={star <= rating ? assets.star_icon : assets.star_dull_icon}
                         alt="star"
                         className={`w-4 ${interactive ? 'cursor-pointer' : ''}`}
                         onClick={() => interactive && setRating(star)}

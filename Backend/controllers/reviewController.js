@@ -130,7 +130,7 @@ const updateRankings = async (req, res) => {
         const productsWithScore = products.map(product => {
             const ratingScore = product.averageRating * 20; // Max 100 points for rating
             const reviewCountScore = Math.min(product.totalReviews * 2, 50); // Max 50 points for review count
-            const bestSellerBonus = product.bestSeller ? 30 : 0; // Bonus for best sellers
+            const bestSellerBonus = (product.bestSeller || product.bestseller) ? 30 : 0; // Bonus for best sellers
             const totalScore = ratingScore + reviewCountScore + bestSellerBonus;
             
             return {
@@ -165,7 +165,7 @@ const getTopRankedProducts = async (req, res) => {
         const products = await productModel.find({})
             .sort({ ranking: 1, averageRating: -1 })
             .limit(parseInt(limit))
-            .select('name image price averageRating totalReviews ranking bestSeller');
+            .select('name image price averageRating totalReviews ranking bestSeller bestseller');
 
         res.json({ success: true, products });
 

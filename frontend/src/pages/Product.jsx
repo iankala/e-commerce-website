@@ -56,7 +56,7 @@ const Product = () => {
                         <img 
                             key={star} 
                             className='w-4' 
-                            src={star <= Math.round(productData.averageRating || 0) ? assets.star_icon : assets.dull_icon} 
+                            src={star <= Math.round(productData.averageRating || 0) ? assets.star_icon : assets.star_dull_icon} 
                             alt="star" 
                         />
                     ))}

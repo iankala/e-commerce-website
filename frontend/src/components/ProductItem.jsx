@@ -25,7 +25,7 @@ const ProductItem = ({id, image, name, price, averageRating, totalReviews, ranki
                     <img 
                         key={star} 
                         className='w-3 h-3' 
-                        src={star <= Math.round(averageRating) ? assets.star_icon : assets.dull_icon} 
+                        src={star <= Math.round(averageRating) ? assets.star_icon : assets.star_dull_icon} 
                         alt="star" 
                     />
                 ))}
