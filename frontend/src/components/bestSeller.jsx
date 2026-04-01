@@ -10,11 +10,8 @@ const BestSeller = () => {
     const [bestSeller, setBestSeller]=useState([])
 
     useEffect(()=>{
-        {
-        const bestProduct = products.filter((item)=>(item.bestSeller))
-        // eslint-disable-next-line react-hooks/set-state-in-effect
+        const bestProduct = products.filter((item)=>(item.bestSeller || item.bestseller))
         setBestSeller(bestProduct.slice(0,5))
-        }
     },[products])
     return (
     <div className='my-10'>

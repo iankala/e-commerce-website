@@ -3,7 +3,7 @@ import { ShopContext } from '../context/shopContext'
 import Title from './title'
 import ProductItem from './ProductItem';
 
-const latestCollection = () => {
+const LatestCollection = () => {
 
     const {products} = useContext(ShopContext);
     const [latestProducts, setLatestProducts] = useState([]);
@@ -17,7 +17,7 @@ const latestCollection = () => {
     <div className='my-10'>
         <div className='text-center py-8 text-3xl'>
             <Title text1={'LATEST '} text2 ={'COLLECTIONS'} />
-            <p className='w-3/4 m-auto text-xs sm:text:sm md:text-base'>
+            <p className='w-3/4 m-auto text-xs sm:text-sm md:text-base'>
             Discover our newest arrivals featuring cutting-edge streetwear designs that blend comfort with contemporary style. Each piece is carefully crafted to elevate your everyday look, from premium basics to statement-making outfits that express your unique personality.</p>
         </div>
       
@@ -41,4 +41,4 @@ const latestCollection = () => {
   )
 }
 
-export default latestCollection
+export default LatestCollection
